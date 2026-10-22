@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corning Taichung Plant - Executive Recruitment War Room</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        corning: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151',
+                            accent: '#10b981', // Corning Emerald Green
+                            cyan: '#38bdf8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-corning-900 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- Custom Notification Modal (Replacing alert()) -->
+    <div id="customModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-corning-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div class="flex items-center gap-3 mb-4 text-emerald-400">
+                <i class="fa-solid fa-circle-check text-2xl"></i>
+                <h3 id="modalTitle" class="text-lg font-bold text-white">系統通知</h3>
+            </div>
+            <p id="modalMessage" class="text-sm text-slate-300 mb-6 leading-relaxed">操作成功完成。</p>
+            <div class="flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-xl transition shadow-lg shadow-emerald-600/20">
+                    確定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Executive Header -->
+    <header class="bg-corning-800/90 backdrop-blur-md border-b border-slate-700/60 sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <i class="fa-solid fa-chart-line text-slate-950 font-bold text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    Corning Taichung Plant <span class="text-emerald-400 font-medium text-sm px-2.5 py-0.5 bg-emerald-500/10 rounded-full border border-emerald-500/20">Executive War Room</span>
+                </h1>
+                <p class="text-xs text-slate-400">12 Active Taichung Roles & Per-Position Recruitment Funnels (Q4 2026)</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <div class="text-right hidden sm:block">
+                <div class="text-xs text-slate-400">Hiring Velocity</div>
+                <div class="text-sm font-semibold text-emerald-400"><i class="fa-solid fa-bolt text-xs mr-1"></i> Active Sprints: 12 Roles</div>
+            </div>
+            <button onclick="toggleExecutiveSummary()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition border border-slate-600 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-cyan-400"></i> Executive Briefing
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-[1600px] w-full mx-auto p-6 flex flex-col gap-6">
+
+        <!-- Executive Strategic Brief Banner -->
+        <div id="execSummaryBanner" class="bg-gradient-to-r from-emerald-950/40 via-corning-800 to-cyan-950/40 border border-emerald-500/30 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 text-emerald-500/5 text-9xl pointer-events-none">
+                <i class="fa-solid fa-crosshairs"></i>
+            </div>
+            <div class="flex justify-between items-start mb-2">
+                <div class="flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+                    <i class="fa-solid fa-circle-check"></i> 台中廠高階招募戰情摘要 (Taichung Plant Executive Recruitment Summary)
+                </div>
+                <button onclick="toggleExecutiveSummary()" class="text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed max-w-5xl">
+                針對台灣康寧台中廠 **12 大活躍崗位**（涵蓋技術經理、進階控制、品保、製程、熱工、材料、量測、電氣、安全與財務），本儀器看板提供即時的 **「每一個崗位獨立招聘漏斗 (Per-Position Recruitment Funnels)」**。高層可透過下方選單隨時切換檢視各職缺從 HR 初篩、技術面試到 Offer 接受的完整漏斗轉換率與瓶頸。
+            </p>
+        </div>
+
+        <!-- KPI Top Row Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Card 1: Active Openings -->
+            <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-emerald-500/50 transition">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Taichung Active Openings (台中職缺)</span>
+                    <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-3xl font-bold text-white tracking-tight">12 <span class="text-lg font-normal text-slate-400">Roles</span></span>
+                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-fire"></i> High Activity</span>
+                </div>
+                <div class="text-xs text-slate-400">Engineering, Quality & Management</div>
+                <div class="w-full bg-slate-700 h-1.5 rounded-full mt-4 overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <!-- Card 2: Time-to-Offer -->
+            <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-cyan-500/50 transition">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Time-to-Offer (平均談判天數)</span>
+                    <div class="w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-3xl font-bold text-white tracking-tight">19 <span class="text-lg font-normal text-slate-400">Days</span></span>
+                    <span class="text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-arrow-trend-down"></i> Target &le; 21d</span>
+                </div>
+                <div class="text-xs text-slate-400">Intake to Offer Acceptance Sprints</div>
+                <div class="w-full bg-slate-700 h-1.5 rounded-full mt-4 overflow-hidden">
+                    <div class="bg-cyan-400 h-full rounded-full" style="width: 85%;"></div>
+                </div>
+            </div>
+
+            <!-- Card 3: Channel ROI -->
+            <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-emerald-500/50 transition">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Channel ROI (最佳主打渠道)</span>
+                    <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-3xl font-bold text-white tracking-tight">4.8x</span>
+                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full"><i class="fa-solid fa-star"></i> Top: Referrals</span>
+                </div>
+                <div class="text-xs text-slate-400">Employee Referrals & LinkedIn Lead</div>
+                <div class="w-full bg-slate-700 h-1.5 rounded-full mt-4 overflow-hidden">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: 90%;"></div>
+                </div>
+            </div>
+
+            <!-- Card 4: Retention Rates -->
+            <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-5 shadow-lg relative overflow-hidden group hover:border-cyan-500/50 transition">
+                <div class="flex justify-between items-start mb-3">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Retention (台中廠留存率)</span>
+                    <div class="w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="flex items-baseline gap-2 mb-2">
+                    <span class="text-2xl font-bold text-white tracking-tight">100% <span class="text-xs text-slate-400">Prob.</span></span>
+                    <span class="text-2xl font-bold text-emerald-400 tracking-tight">92.0% <span class="text-xs text-slate-400">1-Yr</span></span>
+                </div>
+                <div class="text-xs text-slate-400">Engineering & MTE Role Benchmarks</div>
+                <div class="w-full bg-slate-700 h-1.5 rounded-full mt-4 overflow-hidden flex gap-1">
+                    <div class="bg-cyan-400 h-full rounded-full" style="width: 100%;"></div>
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: 92%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: Per-Position Recruitment Funnels (每一個崗位的獨立招聘漏斗) -->
+        <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-6 shadow-xl">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 pb-4 border-b border-slate-700/60">
+                <div>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-filter text-emerald-400"></i> 各崗位即時招募漏斗分析 (Per-Position Recruitment Funnels)
+                    </h2>
+                    <p class="text-xs text-slate-400">點擊下方職缺切換按鈕，即可檢視該崗位從 HR初篩 到 Offer 的即時轉換數據與瓶頸。</p>
+                </div>
+                <!-- Role Selector Pills / Dropdown -->
+                <div class="flex flex-wrap gap-2 max-w-2xl" id="rolePillsContainer">
+                    <!-- Dynamically populated or static pills -->
+                </div>
+            </div>
+
+            <!-- Funnel Display Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                <!-- Left: Funnel Chart Canvas -->
+                <div class="lg:col-span-2 bg-corning-900/60 border border-slate-700/60 rounded-xl p-5 relative h-80">
+                    <canvas id="positionFunnelChart"></canvas>
+                </div>
+
+                <!-- Right: Role Summary Stats & Insights -->
+                <div class="bg-corning-700/30 border border-slate-700/60 rounded-xl p-5 flex flex-col justify-between h-80">
+                    <div>
+                        <div id="selectedRoleBadge" class="inline-block px-2.5 py-1 text-xs font-semibold bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20 mb-3">
+                            Technical Manager
+                        </div>
+                        <h3 id="selectedRoleTitle" class="text-base font-bold text-white mb-2">76278_Technical Manager, Precision & Motion Control</h3>
+                        <p id="selectedRoleDesc" class="text-xs text-slate-300 leading-relaxed mb-4">
+                            管理級職缺，需雙重經歷且面試層級高。目前漏斗在 Tech Screen 階段篩選嚴格，轉化率保持穩定。
+                        </p>
+                    </div>
+                    <div class="space-y-2 pt-3 border-t border-slate-700/60">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">總投遞/應徵人數:</span>
+                            <span id="statApplicants" class="font-semibold text-white">24 人</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">HR 初篩通過率:</span>
+                            <span id="statHrPass" class="font-semibold text-emerald-400">50.0%</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-400">預估 Time-to-Offer:</span>
+                            <span id="statTto" class="font-semibold text-cyan-400">18 天</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid Section (Domain Distribution & Channel ROI) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Chart 1: Taichung Openings Domain Distribution -->
+            <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-pie text-emerald-400"></i> 台中廠職缺領域分佈 (Openings by Domain)
+                        </h2>
+                        <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Total: 12 Active Roles</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-6">統計台中廠現有職缺在控制系統、製程/熱工、品質/安全與管理支援的占比。</p>
+                </div>
+                <div class="relative h-72 w-full">
+                    <canvas id="domainChart"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-between text-xs text-slate-400">
+                    <span>Core Focus: Control & Process Engineering</span>
+                    <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> All Sourcing Active</span>
+                </div>
+            </div>
+
+            <!-- Chart 2: Channel ROI & Sourcing Effectiveness -->
+            <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-base font-semibold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye text-cyan-400"></i> 招募渠道轉換與 ROI (Channel Effectiveness)
+                        </h2>
+                        <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">ROI Multiplier</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-6">比較內部推薦、LinkedIn、104 及獵頭在台中廠工程職缺的轉換成效。</p>
+                </div>
+                <div class="relative h-72 w-full flex items-center justify-center">
+                    <canvas id="channelRoiChart"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-between text-xs text-slate-400">
+                    <span>Best ROI: Internal Referrals (4.8x)</span>
+                    <span class="text-cyan-400 font-semibold"><i class="fa-solid fa-lightbulb"></i> Focus on Direct Sourcing</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Taichung Active Openings Directory Table -->
+        <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-6 shadow-xl">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                <div>
+                    <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-400"></i> 台中廠 12 大現有職缺即時清單 (Taichung Active Openings Directory)
+                    </h2>
+                    <p class="text-xs text-slate-400">依據最新 104 職缺擷取與招募作戰計畫建立之即時管控表。</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20"><i class="fa-solid fa-circle text-[8px] mr-1"></i> 104 平台徵才中</span>
+                </div>
+            </div>
+
+            <!-- Openings Table / Grid -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-300">
+                    <thead class="bg-corning-700/60 text-xs uppercase text-slate-400 border-b border-slate-700">
+                        <tr>
+                            <th class="py-3 px-4">職缺編號與名稱 (Role Title)</th>
+                            <th class="py-3 px-4">領域分類 (Domain)</th>
+                            <th class="py-3 px-4">經歷要求 (Exp.)</th>
+                            <th class="py-3 px-4">學歷要求 (Edu.)</th>
+                            <th class="py-3 px-4">應徵人數 (Applicants)</th>
+                            <th class="py-3 px-4 text-right">狀態 / 招募進度</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700/60">
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">76278_Technical Manager, Precision & Motion Control</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-purple-500/10 text-purple-400 rounded border border-purple-500/20">Management</span></td>
+                            <td class="py-3.5 px-4">10年以上</td>
+                            <td class="py-3.5 px-4">碩士以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">進行複試 (Panel)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">78421_Senior Quality Engineer</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">Quality & Safety</span></td>
+                            <td class="py-3.5 px-4">7年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">主動尋訪中 (Active)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">(Sr) Control Systems Engineer_Advanced & Precision</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">Control / Auto</span></td>
+                            <td class="py-3.5 px-4">經驗不拘</td>
+                            <td class="py-3.5 px-4">碩士以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">技術面試中 (Tech)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">(Sr) Control Systems Engineer_PLC</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">Control / Auto</span></td>
+                            <td class="py-3.5 px-4">3年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">進行初篩 (HR)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">75050_Process Engineer</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">Process / Thermal</span></td>
+                            <td class="py-3.5 px-4">1年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">進行複試 (Panel)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">74513_Material Process Engineer</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">Process / Thermal</span></td>
+                            <td class="py-3.5 px-4">經驗不拘</td>
+                            <td class="py-3.5 px-4">碩士以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-cyan-400 font-medium">排定面試中</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">74511_Thermal Process Engineer</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">Process / Thermal</span></td>
+                            <td class="py-3.5 px-4">經驗不拘</td>
+                            <td class="py-3.5 px-4">碩士以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">主動尋訪中 (Active)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">Measurement System Engineer</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">Control / Auto</span></td>
+                            <td class="py-3.5 px-4">3年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">技術面試中 (Tech)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">76279_Senior Electrical Power Engineer</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/20">Control / Auto</span></td>
+                            <td class="py-3.5 px-4">10年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-cyan-400 font-medium">進行初篩 (HR)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">77585_Safety Engineer 安全工程師</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">Quality & Safety</span></td>
+                            <td class="py-3.5 px-4">5年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">11~30 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">複試協調中</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">75817_Financial Analyst</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-amber-500/10 text-amber-400 rounded border border-amber-500/20">Support / Fin</span></td>
+                            <td class="py-3.5 px-4">4年以上</td>
+                            <td class="py-3.5 px-4">大學以上</td>
+                            <td class="py-3.5 px-4">6~10 人</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">進行複試 (Panel)</span></td>
+                        </tr>
+                        <tr class="hover:bg-corning-700/30 transition">
+                            <td class="py-3.5 px-4 font-semibold text-white">美商_技術員-台中廠</td>
+                            <td class="py-3.5 px-4"><span class="px-2 py-0.5 text-xs bg-slate-500/10 text-slate-300 rounded border border-slate-500/20">Production</span></td>
+                            <td class="py-3.5 px-4">經驗不拘</td>
+                            <td class="py-3.5 px-4">高中</td>
+                            <td class="py-3.5 px-4">30人以上</td>
+                            <td class="py-3.5 px-4 text-right"><span class="text-emerald-400 font-medium">量產招募中 (Batch)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Export Action Bar -->
+        <div class="bg-corning-800 border border-slate-700/70 rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-semibold text-white">準備好進行台中廠高階主管戰情匯報了嗎？</div>
+                    <div class="text-xs text-slate-400">可一鍵匯出包含 12 個崗位獨立招募漏斗的完整戰情分析報告。</div>
+                </div>
+            </div>
+            <button onclick="exportExecReport()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+                <i class="fa-solid fa-download"></i> 匯出完整戰情報告 (Export Full Executive Report)
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-800">
+        Taiwan Corning Display Technologies • Taichung Plant HR & TA Executive War Room © 2026
+    </footer>
+
+    <!-- Script for Per-Position Funnels & Charts -->
+    <script>
+        // 12 Taichung Positions & Their Specific Funnel Data
+        const positionFunnels = {
+            role1: {
+                title: "76278_Technical Manager, Precision & Motion Control",
+                badge: "Management",
+                desc: "高階管理與技術架構職缺，被動人選為主。目前 HR Screen 篩選 24 人，Tech 階段轉化率良好，正在進行 Panel 複試。",
+                applicants: "24 人",
+                hrPass: "50.0%",
+                tto: "21 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Technical/Coding", "Dept Head", "Sys Design", "Offer"],
+                counts: [24, 12, 6, 4, 2, 2, 1]
+            },
+            role2: {
+                title: "78421_Senior Quality Engineer",
+                badge: "Quality & Safety",
+                desc: "高品質系統建置專家，因出差比例較高，正在透過同業 Mapping 與主動尋訪擴大候選人池。",
+                applicants: "20 人",
+                hrPass: "50.0%",
+                tto: "19 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Technical", "Dept Head", "Offer"],
+                counts: [20, 10, 5, 3, 2, 1]
+            },
+            role3: {
+                title: "(Sr) Control Systems Engineer_Advanced & Precision",
+                badge: "Control / Auto",
+                desc: "結合控制理論與 AI/模擬實作，技術要求高。目前有 28 人應徵，技術面試階段表現優秀。",
+                applicants: "28 人",
+                hrPass: "50.0%",
+                tto: "17 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Coding/Sim", "Dept Head", "Offer"],
+                counts: [28, 14, 7, 5, 2, 1]
+            },
+            role4: {
+                title: "(Sr) Control Systems Engineer_PLC",
+                badge: "Control / Auto",
+                desc: "主力自動化與 PLC 配線實作，目前處於 HR 初篩與技術預篩階段。",
+                applicants: "22 人",
+                hrPass: "50.0%",
+                tto: "18 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Wiring Test", "Dept Head", "Offer"],
+                counts: [22, 11, 6, 4, 2, 1]
+            },
+            role5: {
+                title: "75050_Process Engineer",
+                badge: "Process / Thermal",
+                desc: "熱門製程工程職缺，應徵人數達 35 人，漏斗流動順暢，有多位候選人進入複試。",
+                applicants: "35 人",
+                hrPass: "51.4%",
+                tto: "15 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Panel Review", "Dept Head", "Offer"],
+                counts: [35, 18, 9, 6, 3, 2]
+            },
+            role6: {
+                title: "74511_Thermal Process Engineer",
+                badge: "Process / Thermal",
+                desc: "先進材料與熱工改善專家，尋求具備碩士以上學歷之人才，目前正進行主動尋訪。",
+                applicants: "18 人",
+                hrPass: "50.0%",
+                tto: "19 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Technical", "Dept Head", "Offer"],
+                counts: [18, 9, 4, 3, 2, 1]
+            },
+            role7: {
+                title: "74513_Material Process Engineer",
+                badge: "Process / Thermal",
+                desc: "支援 MTE 亞洲玻璃與陶瓷技術開發，排定面試中，人才質量高。",
+                applicants: "16 人",
+                hrPass: "50.0%",
+                tto: "18 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Technical", "Dept Head", "Offer"],
+                counts: [16, 8, 4, 2, 1, 1]
+            },
+            role8: {
+                title: "Measurement System Engineer",
+                badge: "Control / Auto",
+                desc: "負責開發先進量測與檢驗自動化系統，目前正在進行技術主管面試。",
+                applicants: "19 人",
+                hrPass: "52.6%",
+                tto: "17 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "System Test", "Dept Head", "Offer"],
+                counts: [19, 10, 5, 3, 2, 1]
+            },
+            role9: {
+                title: "76279_Senior Electrical Power Engineer",
+                badge: "Control / Auto",
+                desc: "資深電力工程與廠務控制，經歷要求 10 年以上，目前於 HR 階段嚴格把關。",
+                applicants: "15 人",
+                hrPass: "46.7%",
+                tto: "21 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Site Review", "Dept Head", "Offer"],
+                counts: [15, 7, 3, 2, 1, 1]
+            },
+            role10: {
+                title: "77585_Safety Engineer 安全工程師",
+                badge: "Quality & Safety",
+                desc: "環境與安全管理系統建置，投遞踴躍（29人），複試協調中。",
+                applicants: "29 人",
+                hrPass: "48.3%",
+                tto: "16 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Audit Test", "Dept Head", "Offer"],
+                counts: [29, 14, 7, 4, 2, 1]
+            },
+            role11: {
+                title: "75817_Financial Analyst",
+                badge: "Support / Fin",
+                desc: "財務資本控制與預算分析，候選人精煉，目前進入部門主管複試。",
+                applicants: "12 人",
+                hrPass: "50.0%",
+                tto: "16 天",
+                stages: ["HR Screen", "Tech Screen", "Line Mgr", "Finance Case", "Dept Head", "Offer"],
+                counts: [12, 6, 3, 2, 1, 1]
+            },
+            role12: {
+                title: "美商_技術員-台中廠",
+                badge: "Production",
+                desc: "量產廠區技術員大批招募，應徵人數超過 30 人，流水線招募中。",
+                applicants: "65 人",
+                hrPass: "61.5%",
+                tto: "12 天",
+                stages: ["HR Screen", "Basic Test", "Line Interview", "Practical", "Offer"],
+                counts: [65, 40, 25, 15, 8]
+            }
+        };
+
+        let currentRoleKey = 'role1';
+        let funnelChartInstance = null;
+
+        // Initialize Role Pills
+        function initRolePills() {
+            const container = document.getElementById('rolePillsContainer');
+            container.innerHTML = '';
+            Object.keys(positionFunnels).forEach((key, index) => {
+                const role = positionFunnels[key];
+                const btn = document.createElement('button');
+                btn.className = `px-3 py-1.5 rounded-lg text-xs font-medium transition border ${key === currentRoleKey ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-600/20' : 'bg-corning-700/60 text-slate-300 border-slate-600 hover:bg-corning-700 hover:text-white'}`;
+                btn.textContent = `${index + 1}. ${role.title.split('_')[0]}`;
+                btn.onclick = () => switchRoleFunnel(key);
+                container.appendChild(btn);
+            });
+        }
+
+        // Switch Funnel Data
+        function switchRoleFunnel(roleKey) {
+            currentRoleKey = roleKey;
+            initRolePills();
+            const role = positionFunnels[roleKey];
+            
+            // Update Summary Stats
+            document.getElementById('selectedRoleBadge').textContent = role.badge;
+            document.getElementById('selectedRoleTitle').textContent = role.title;
+            document.getElementById('selectedRoleDesc').textContent = role.desc;
+            document.getElementById('statApplicants').textContent = role.applicants;
+            document.getElementById('statHrPass').textContent = role.hrPass;
+            document.getElementById('statTto').textContent = role.tto;
+
+            // Update Chart
+            updateFunnelChart(role.stages, role.counts);
+        }
+
+        // Render Funnel Chart
+        function updateFunnelChart(labels, data) {
+            const ctx = document.getElementById('positionFunnelChart').getContext('2d');
+            if (funnelChartInstance) {
+                funnelChartInstance.destroy();
+            }
+            funnelChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '候選人數 (Candidates)',
+                        data: data,
+                        backgroundColor: '#10b981',
+                        borderRadius: 6,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` 階段剩餘人數: ${context.raw} 人`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 11 } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#f8fafc', font: { size: 11, weight: '500' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Toggle Executive Summary
+        function toggleExecutiveSummary() {
+            const banner = document.getElementById('execSummaryBanner');
+            banner.classList.toggle('hidden');
+        }
+
+        // Custom Modal Functions
+        function exportExecReport() {
+            showModal("匯報報告產生成功", "「Corning 台中廠 12 大崗位獨立漏斗與戰情分析報告」已準備就緒，可直接提供高階主管審閱。");
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        // Initialize General Charts on Load
+        window.onload = function() {
+            initRolePills();
+            switchRoleFunnel('role1');
+
+            // Domain Chart
+            const ctxDomain = document.getElementById('domainChart').getContext('2d');
+            new Chart(ctxDomain, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Control & Automation (控制系統)', 'Process & Thermal (製程與熱工)', 'Quality & Safety (品質與安全)', 'Management & Support (管理與支援)', 'Production Technician (技術員)'],
+                    datasets: [{
+                        data: [4, 3, 2, 2, 1],
+                        backgroundColor: ['#38bdf8', '#10b981', '#34d399', '#f59e0b', '#64748b'],
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#cbd5e1', font: { size: 11 }, boxWidth: 12 }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // Channel ROI Chart
+            const ctxRoi = document.getElementById('channelRoiChart').getContext('2d');
+            new Chart(ctxRoi, {
+                type: 'bar',
+                data: {
+                    labels: ['Employee Referrals (內推)', 'LinkedIn Recruiter', '104人才搜尋/主動', '同業 Mapping & 獵頭'],
+                    datasets: [{
+                        label: 'Channel ROI Multiplier',
+                        data: [4.8, 3.5, 2.2, 1.8],
+                        backgroundColor: ['#10b981', '#38bdf8', '#64748b', '#334155'],
+                        borderRadius: 6,
+                        barThickness: 24
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#f8fafc', font: { size: 11 } } },
+                        y: { max: 6, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#94a3b8', font: { size: 11 } } }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
